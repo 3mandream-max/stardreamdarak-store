@@ -1,28 +1,32 @@
 -- CreateTable
 CREATE TABLE "Product" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "price" INTEGER NOT NULL,
-    "images" TEXT NOT NULL,
+    "images" JSONB NOT NULL,
     "category" TEXT NOT NULL,
-    "options" TEXT NOT NULL,
+    "options" JSONB NOT NULL,
     "stock" INTEGER NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Product_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Order" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id" SERIAL NOT NULL,
     "orderNumber" TEXT NOT NULL,
-    "items" TEXT NOT NULL,
+    "items" JSONB NOT NULL,
     "subtotal" INTEGER NOT NULL,
     "totalPrice" INTEGER NOT NULL,
     "shippingFee" INTEGER NOT NULL,
-    "customer" TEXT NOT NULL,
+    "customer" JSONB NOT NULL,
     "status" TEXT NOT NULL DEFAULT 'created',
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Order_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
