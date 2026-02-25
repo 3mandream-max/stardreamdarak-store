@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { maybeInitDatabaseAtRuntime } from "@/lib/runtimeDbInit";
 
 export const ORDER_STATUSES = ["created", "paid", "shipped", "cancelled"] as const;
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
@@ -31,16 +32,19 @@ type CreateOrderInput = {
 };
 
 export async function listOrders() {
+  await maybeInitDatabaseAtRuntime();
   return db.order.findMany({
     orderBy: { createdAt: "desc" },
   });
 }
 
 export async function getOrderById(id: number) {
+  await maybeInitDatabaseAtRuntime();
   return db.order.findUnique({ where: { id } });
 }
 
 export async function createOrder(input: CreateOrderInput) {
+  await maybeInitDatabaseAtRuntime();
   return db.order.create({
     data: {
       orderNumber: input.orderNumber,
@@ -55,6 +59,7 @@ export async function createOrder(input: CreateOrderInput) {
 }
 
 export async function updateOrderStatus(id: number, status: OrderStatus) {
+  await maybeInitDatabaseAtRuntime();
   return db.order.update({
     where: { id },
     data: { status },

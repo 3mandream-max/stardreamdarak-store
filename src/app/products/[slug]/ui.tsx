@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
@@ -50,7 +50,7 @@ export function AddToCartPanel({ product }: AddToCartPanelProps) {
           >
             {values.map((value) => (
               <option key={`${name}-${value}`} value={value}>
-                {value}
+                {value === "default" ? "기본" : value}
               </option>
             ))}
           </select>
@@ -70,19 +70,19 @@ export function AddToCartPanel({ product }: AddToCartPanelProps) {
             selectedOptions,
             qty: 1,
           });
-          setMessage(result.message ?? "Added to cart.");
+          setMessage(result.message ?? "장바구니에 담았습니다.");
         }}
         className="rounded-xl bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-        aria-label={`Add ${product.name} to cart`}
+        aria-label={`${product.name} 장바구니 담기`}
       >
-        Add to Cart
+        장바구니 담기
       </button>
 
       <p className="text-xs text-slate-600" aria-live="polite">
         {message}
       </p>
       <Link href="/cart" className="inline-flex text-sm text-brand-600 hover:underline">
-        Go to Cart
+        장바구니로 이동
       </Link>
     </div>
   );

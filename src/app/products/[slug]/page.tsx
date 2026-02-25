@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+﻿import { notFound } from "next/navigation";
 import { getProductBySlug } from "@/lib/repositories/products";
 import { AddToCartPanel } from "./ui";
 
@@ -20,7 +20,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   return (
     <article className="space-y-5">
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="grid grid-cols-2 gap-2" aria-label="Product image gallery">
+        <div className="grid grid-cols-2 gap-2" aria-label="상품 이미지 갤러리">
           {images.length > 0 ? (
             images.map((img, idx) => (
               <div
@@ -40,7 +40,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
           <h1 className="text-2xl font-bold">{product.name}</h1>
           <p className="text-xl font-semibold">KRW {product.price.toLocaleString("en-US")}</p>
           <p className="text-sm leading-relaxed text-slate-700">{product.description}</p>
-          <p className="text-sm text-slate-600">Stock: {product.stock}</p>
+          <p className="text-sm text-slate-600">재고: {product.stock}</p>
           <AddToCartPanel
             product={{
               id: product.id,

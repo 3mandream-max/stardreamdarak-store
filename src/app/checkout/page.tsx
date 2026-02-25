@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -36,18 +36,18 @@ export default function CheckoutPage() {
   const amounts = useMemo(() => (cart ? getCartAmounts(cart) : { subtotal: 0, shippingFee: 0, total: 0 }), [cart]);
 
   if (!cart) {
-    return <p className="text-sm text-slate-600">Loading checkout...</p>;
+    return <p className="text-sm text-slate-600">주문 정보를 준비하는 중입니다...</p>;
   }
 
   if (cart.items.length === 0) {
     return (
       <section className="space-y-3">
-        <h1 className="text-xl font-bold">Checkout</h1>
+        <h1 className="text-xl font-bold">주문/결제</h1>
         <p className="rounded-lg border border-dashed border-slate-300 p-4 text-sm text-slate-600">
-          Your cart is empty. Add products first.
+          장바구니가 비어 있습니다. 먼저 상품을 담아주세요.
         </p>
         <Link href="/products" className="inline-flex rounded bg-slate-900 px-3 py-2 text-sm font-semibold text-white">
-          Browse Products
+          상품 보러가기
         </Link>
       </section>
     );
@@ -86,14 +86,14 @@ export default function CheckoutPage() {
 
       const payload = (await response.json()) as { error?: string; orderId?: number };
       if (!response.ok || !payload.orderId) {
-        setGlobalError(payload.error ?? "Unable to create order.");
+        setGlobalError(payload.error ?? "주문 생성에 실패했습니다.");
         return;
       }
 
       clearCart();
       router.push(`/order/success?orderId=${payload.orderId}`);
     } catch {
-      setGlobalError("Network error. Please try again.");
+      setGlobalError("네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
     } finally {
       setIsSubmitting(false);
     }
@@ -101,7 +101,7 @@ export default function CheckoutPage() {
 
   return (
     <section className="space-y-4">
-      <h1 className="text-xl font-bold">Checkout</h1>
+      <h1 className="text-xl font-bold">주문/결제</h1>
       {globalError ? (
         <p className="rounded border border-red-300 bg-red-50 p-2 text-sm text-red-700" role="alert">
           {globalError}
@@ -110,17 +110,17 @@ export default function CheckoutPage() {
 
       <form onSubmit={onSubmit} className="space-y-4 rounded-xl border border-slate-200 bg-white p-4">
         <fieldset className="space-y-2">
-          <legend className="text-sm font-semibold">Buyer</legend>
+          <legend className="text-sm font-semibold">주문자 정보</legend>
           <TextInput
             id="buyerName"
-            label="Name"
+            label="이름"
             value={form.buyerName}
             error={errors.buyerName}
             onChange={(value) => setForm((prev) => ({ ...prev, buyerName: value }))}
           />
           <TextInput
             id="buyerPhone"
-            label="Phone"
+            label="연락처"
             value={form.buyerPhone}
             error={errors.buyerPhone}
             onChange={(value) => setForm((prev) => ({ ...prev, buyerPhone: value }))}
@@ -128,17 +128,17 @@ export default function CheckoutPage() {
         </fieldset>
 
         <fieldset className="space-y-2">
-          <legend className="text-sm font-semibold">Recipient</legend>
+          <legend className="text-sm font-semibold">수령인 정보</legend>
           <TextInput
             id="recipientName"
-            label="Name"
+            label="이름"
             value={form.recipientName}
             error={errors.recipientName}
             onChange={(value) => setForm((prev) => ({ ...prev, recipientName: value }))}
           />
           <TextInput
             id="recipientPhone"
-            label="Phone"
+            label="연락처"
             value={form.recipientPhone}
             error={errors.recipientPhone}
             onChange={(value) => setForm((prev) => ({ ...prev, recipientPhone: value }))}
@@ -146,31 +146,31 @@ export default function CheckoutPage() {
         </fieldset>
 
         <fieldset className="space-y-2">
-          <legend className="text-sm font-semibold">Address</legend>
+          <legend className="text-sm font-semibold">배송지 정보</legend>
           <TextInput
             id="zipCode"
-            label="Zip Code"
+            label="우편번호"
             value={form.zipCode}
             error={errors.zipCode}
             onChange={(value) => setForm((prev) => ({ ...prev, zipCode: value }))}
           />
           <TextInput
             id="address1"
-            label="Address 1"
+            label="기본 주소"
             value={form.address1}
             error={errors.address1}
             onChange={(value) => setForm((prev) => ({ ...prev, address1: value }))}
           />
           <TextInput
             id="address2"
-            label="Address 2"
+            label="상세 주소"
             value={form.address2 ?? ""}
             error={errors.address2}
             onChange={(value) => setForm((prev) => ({ ...prev, address2: value }))}
           />
           <TextInput
             id="requestNote"
-            label="Request Note"
+            label="배송 요청사항"
             value={form.requestNote ?? ""}
             error={errors.requestNote}
             onChange={(value) => setForm((prev) => ({ ...prev, requestNote: value }))}
@@ -178,9 +178,9 @@ export default function CheckoutPage() {
         </fieldset>
 
         <div className="rounded border border-slate-200 bg-slate-50 p-3 text-sm">
-          <p>Subtotal: KRW {amounts.subtotal.toLocaleString("en-US")}</p>
-          <p>Shipping: KRW {amounts.shippingFee.toLocaleString("en-US")}</p>
-          <p className="mt-1 font-semibold">Total: KRW {amounts.total.toLocaleString("en-US")}</p>
+          <p>상품 금액: KRW {amounts.subtotal.toLocaleString("en-US")}</p>
+          <p>배송비: KRW {amounts.shippingFee.toLocaleString("en-US")}</p>
+          <p className="mt-1 font-semibold">총 결제금액: KRW {amounts.total.toLocaleString("en-US")}</p>
         </div>
 
         <button
@@ -188,7 +188,7 @@ export default function CheckoutPage() {
           disabled={isSubmitting}
           className="w-full rounded bg-brand-500 px-4 py-2 text-sm font-semibold text-white disabled:opacity-60"
         >
-          {isSubmitting ? "Creating Order..." : "Place Order"}
+          {isSubmitting ? "주문 생성 중..." : "주문하기"}
         </button>
       </form>
     </section>

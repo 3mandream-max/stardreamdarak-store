@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { maybeInitDatabaseAtRuntime } from "@/lib/runtimeDbInit";
 
 type ListProductsInput = {
   category?: string;
@@ -12,6 +13,7 @@ const orderByMap = {
 };
 
 export async function getFeaturedProducts(limit = 6) {
+  await maybeInitDatabaseAtRuntime();
   return db.product.findMany({
     orderBy: { createdAt: "desc" },
     take: limit,
@@ -19,6 +21,7 @@ export async function getFeaturedProducts(limit = 6) {
 }
 
 export async function listProducts({ category, sort = "new" }: ListProductsInput) {
+  await maybeInitDatabaseAtRuntime();
   return db.product.findMany({
     where: category ? { category } : undefined,
     orderBy: orderByMap[sort as keyof typeof orderByMap] ?? orderByMap.new,
@@ -26,10 +29,12 @@ export async function listProducts({ category, sort = "new" }: ListProductsInput
 }
 
 export async function getProductBySlug(slug: string) {
+  await maybeInitDatabaseAtRuntime();
   return db.product.findUnique({ where: { slug } });
 }
 
 export async function getProductsByIds(ids: number[]) {
+  await maybeInitDatabaseAtRuntime();
   if (ids.length === 0) return [];
   return db.product.findMany({
     where: { id: { in: ids } },
@@ -37,6 +42,7 @@ export async function getProductsByIds(ids: number[]) {
 }
 
 export async function listCategories() {
+  await maybeInitDatabaseAtRuntime();
   const rows = await db.product.findMany({
     select: { category: true },
     distinct: ["category"],

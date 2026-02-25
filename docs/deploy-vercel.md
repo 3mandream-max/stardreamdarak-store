@@ -20,31 +20,54 @@ npm run vercel-build
 `vercel-build` 내용:
 
 ```bash
-prisma generate && prisma migrate deploy && prisma db seed && next build
+next build
 ```
 
-이 순서로 마이그레이션/시드가 먼저 적용되어, 빌드 프리렌더 단계에서 `prisma.product.findMany()`가 실행되더라도 테이블 미존재(P2021) 오류를 방지합니다.
+빌드 단계에서 DB 접속을 강제하지 않으므로, Neon 연결 불안정(P1001)로 빌드가 실패하는 문제를 줄일 수 있습니다.
 
-## 3) 환경변수 설정 항목
+## 3) 런타임 DB 초기화 옵션
 
-Vercel 프로젝트 `Settings > Environment Variables`에 아래 값을 설정합니다.
+보호된 엔드포인트 `/api/admin/init`를 통해 런타임에 마이그레이션을 1회 시도할 수 있습니다.
+
+동작 조건:
+
+- `RUNTIME_DB_INIT_ENABLED=true`
+- `INIT_DB_TOKEN` 설정
+- 요청 헤더 `Authorization: Bearer <INIT_DB_TOKEN>` 또는 `x-init-token`
+
+호출 예시:
+
+```bash
+curl -X POST https://<your-domain>/api/admin/init \
+  -H "Authorization: Bearer <INIT_DB_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"seed":false}'
+```
+
+시드까지 허용하려면:
+
+- `RUNTIME_DB_INIT_ALLOW_SEED=true`
+- body를 `{"seed":true}`로 호출
+
+## 4) 첫 요청 시 자동 초기화(옵션)
+
+- `RUNTIME_DB_INIT_ON_FIRST_REQUEST=true`를 설정하면 첫 DB 요청 시 `prisma migrate deploy`를 1회 시도합니다.
+- 실패 시 페이지는 fallback 처리되며, 필요한 경우 `/api/admin/init`로 수동 초기화를 수행하세요.
+
+## 5) 환경변수 설정 항목
+
+필수:
 
 - `DATABASE_URL`
 - `ADMIN_PASSWORD`
 
-권장:
+선택(런타임 초기화):
 
-- `DATABASE_URL`은 PostgreSQL 연결 문자열을 사용합니다. (Neon/Supabase/Vercel Postgres 등)
-- `ADMIN_PASSWORD`는 충분히 긴 랜덤 문자열을 사용합니다.
+- `RUNTIME_DB_INIT_ENABLED`
+- `RUNTIME_DB_INIT_ON_FIRST_REQUEST`
+- `RUNTIME_DB_INIT_ALLOW_SEED`
+- `INIT_DB_TOKEN`
 
-## 4) SQLite 사용 시 주의점 (개발용)
+## 6) 프로덕션 권장 절차
 
-- SQLite(`file:./dev.db`)는 로컬 개발/실험에는 편하지만, Vercel 같은 서버리스 운영에는 부적합합니다.
-- 프로덕션에서는 PostgreSQL 같은 관리형 DB를 사용하세요.
-
-## 5) 프로덕션 DB 전환 체크
-
-1. 관리형 PostgreSQL 인스턴스 생성
-2. `DATABASE_URL` 설정
-3. 첫 배포에서 `npm run vercel-build` 실행 확인
-4. `/products`, `/admin/orders` 등 DB 의존 라우트 정상 응답 확인
+가장 안전한 방식은 배포 외부(CI/CD 또는 운영 콘솔)에서 DB 마이그레이션/시드를 먼저 완료한 뒤 앱을 배포하는 방식입니다.
