@@ -25,11 +25,12 @@ npm install
 cp .env.example .env
 ```
 
-3. `.env`의 `DATABASE_URL`, `ADMIN_PASSWORD` 설정
+3. `.env`의 `DATABASE_URL`, `ADMIN_PASSWORD`, `BLOB_READ_WRITE_TOKEN` 설정
 
 ```env
 DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/DB_NAME?sslmode=require"
 ADMIN_PASSWORD="change-this-to-a-strong-password"
+BLOB_READ_WRITE_TOKEN="vercel_blob_rw_token"
 ```
 
 4. 마이그레이션/시드 적용
@@ -45,12 +46,38 @@ npm run db:seed
 npm run dev
 ```
 
+## 로컬 이미지 업로드 활성화
+
+1. Vercel에서 Blob 토큰 확인
+- 경로: `Project(stardreamdarak-store) -> Settings -> Environment Variables -> BLOB_READ_WRITE_TOKEN`
+
+2. 로컬 환경변수 파일 생성
+
+```bash
+cp .env.local.example .env.local
+```
+
+`.env.local`에 `BLOB_READ_WRITE_TOKEN` 값을 붙여넣습니다.
+
+3. 개발 서버 재시작
+- 환경변수 변경 후에는 서버를 반드시 다시 시작해야 합니다.
+
+```bash
+npm run dev
+```
+
+4. 업로드 테스트
+- `/admin` 로그인
+- 상품 카드에서 파일 선택 후 `이미지 업로드` 클릭
+- 업로드 성공 후 목록/상세 페이지에 이미지가 반영되는지 확인
+
 ## 환경변수 안내
 
 필수:
 
 - `DATABASE_URL`: PostgreSQL 연결 문자열
 - `ADMIN_PASSWORD`: `/admin` 로그인 비밀번호
+- `BLOB_READ_WRITE_TOKEN`: 관리자 이미지 업로드용 Vercel Blob 토큰
 
 선택(런타임 DB 초기화):
 
@@ -66,8 +93,11 @@ npm run dev
 - `/cart`: 장바구니
 - `/checkout`: 주문/결제 정보 입력
 - `/admin`: 관리자 로그인 및 상품 확인
+- `/admin/products/new`: 관리자 상품 등록
+- `/admin/products/[id]/edit`: 관리자 상품 수정
 - `/admin/orders`: 관리자 주문 목록
 - `/api/admin/init`: 보호된 런타임 DB 초기화 엔드포인트
+- `/api/upload`: 관리자 이미지 업로드 엔드포인트
 
 ## 관리자 로그인 방식 주의사항
 

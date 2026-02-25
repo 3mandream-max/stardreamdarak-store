@@ -4,6 +4,7 @@ out
 coverage
 .env*
 !.env.example
+!.env.local.example
 dev.db
 prisma/dev.db
 prisma/dev.db-journal

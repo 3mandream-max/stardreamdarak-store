@@ -15,14 +15,15 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   }
 
   const images = Array.isArray(product.images) ? product.images : [];
+  const mergedImages = product.imageUrl ? [product.imageUrl, ...images] : images;
   const normalizedOptions = normalizeProductOptions(product.options);
 
   return (
     <article className="space-y-5">
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="grid grid-cols-2 gap-2" aria-label="상품 이미지 갤러리">
-          {images.length > 0 ? (
-            images.map((img, idx) => (
+          {mergedImages.length > 0 ? (
+            mergedImages.map((img, idx) => (
               <div
                 key={`${String(img)}-${idx}`}
                 className="aspect-square rounded-xl border border-slate-200 bg-slate-100 p-2 text-xs text-slate-600"
@@ -48,7 +49,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
               slug: product.slug,
               price: product.price,
               stock: product.stock,
-              image: images[0] ? String(images[0]) : "/placeholder/default.png",
+              image: mergedImages[0] ? String(mergedImages[0]) : "/placeholder/default.png",
               options: normalizedOptions,
             }}
           />

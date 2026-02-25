@@ -60,6 +60,7 @@ curl -X POST https://<your-domain>/api/admin/init \
 
 - `DATABASE_URL`
 - `ADMIN_PASSWORD`
+- `BLOB_READ_WRITE_TOKEN`
 
 선택(런타임 초기화):
 
@@ -71,3 +72,10 @@ curl -X POST https://<your-domain>/api/admin/init \
 ## 6) 프로덕션 권장 절차
 
 가장 안전한 방식은 배포 외부(CI/CD 또는 운영 콘솔)에서 DB 마이그레이션/시드를 먼저 완료한 뒤 앱을 배포하는 방식입니다.
+
+## 7) 관리자 이미지 업로드
+
+- 업로드 API: `POST /api/upload`
+- 관리자 인증 쿠키가 있는 요청만 허용됩니다.
+- `BLOB_READ_WRITE_TOKEN`은 서버에서만 사용되며 클라이언트에 노출되지 않습니다.
+- Vercel Dashboard에서 Storage > Blob를 연결하면 `BLOB_READ_WRITE_TOKEN`이 프로젝트 Environment Variables에 자동 추가됩니다.

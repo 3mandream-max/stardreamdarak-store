@@ -72,7 +72,11 @@ export async function ProductsList({ category, sort = "new" }: ProductsListProps
         <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {products.map((product) => (
             <li key={product.id} className="rounded-xl border border-slate-200 bg-white p-3">
-              <div className="aspect-square rounded-lg bg-slate-100" aria-hidden="true" />
+              {product.imageUrl ? (
+                <img src={product.imageUrl} alt={`${product.name} 이미지`} className="aspect-square w-full rounded-lg object-cover" />
+              ) : (
+                <div className="aspect-square rounded-lg bg-slate-100" aria-hidden="true" />
+              )}
               <h3 className="mt-3 text-sm font-semibold">{product.name}</h3>
               <p className="mt-1 text-sm text-slate-600">KRW {product.price.toLocaleString("en-US")}</p>
               <Link href={`/products/${product.slug}`} className="mt-2 inline-flex text-sm font-medium text-brand-600 hover:underline">
